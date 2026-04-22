@@ -230,20 +230,23 @@ export default function CalculatorPage() {
         <TableScreen />
       )}
 
-      {/* Bottom nav: visible on Tabla, or on Álgebra when keyboard is closed.
-           When hidden, a zero-height filler still pads the bottom safe area. */}
-      {(activeNavTab !== 'algebra' || !isKeyboardVisible) ? (
-        <BottomNavigation
-          activeTab={activeNavTab}
-          onTabChange={handleTabChange}
-          isExamMode={isExamMode}
-        />
-      ) : (
-        <div
-          className={`shrink-0 ${isExamMode ? 'bg-header-teal' : 'bg-white'}`}
-          style={{ height: 'env(safe-area-inset-bottom)' }}
-        />
-      )}
+      {/* Bottom nav: fixed to viewport bottom — immune to overflow clipping.
+           Spacer reserves the same height in the flex column so content isn't hidden behind it. */}
+      <BottomNavigation
+        activeTab={activeNavTab}
+        onTabChange={handleTabChange}
+        isExamMode={isExamMode}
+        isHidden={activeNavTab === 'algebra' && isKeyboardVisible}
+      />
+      {/* Spacer that matches the fixed nav height so content isn't occluded */}
+      <div
+        className="shrink-0"
+        style={{
+          height: (activeNavTab !== 'algebra' || !isKeyboardVisible)
+            ? 'calc(3.5rem + env(safe-area-inset-bottom))'
+            : 'env(safe-area-inset-bottom)',
+        }}
+      />
 
       <Drawer
         isOpen={isDrawerOpen}
