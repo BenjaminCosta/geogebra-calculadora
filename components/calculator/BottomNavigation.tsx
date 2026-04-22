@@ -38,7 +38,7 @@ export function BottomNavigation({
     <nav
       aria-hidden={isHidden}
       style={{
-        paddingBottom: isIosStandalone ? '0px' : 'env(safe-area-inset-bottom)',
+        paddingBottom: isIosStandalone ? 'env(safe-area-inset-bottom)' : 'env(safe-area-inset-bottom)',
       }}
       className={`relative z-30 shrink-0 flex h-14 items-center justify-around transition-colors duration-300 ${
         isHidden ? 'hidden' : ''

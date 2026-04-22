@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import type { ReactNode } from 'react'
-import { X, FileText, Unlock } from 'lucide-react'
+import { X, FileText } from 'lucide-react'
 
 interface DrawerProps {
   isOpen: boolean
@@ -66,7 +66,7 @@ export function Drawer({
   const examMenuItems: MenuItem[] = [
     { id: 'clear', icon: <X className="w-6 h-6 text-icon-gray" />, label: 'Borrar todo', action: onClearAll },
     { id: 'exam-registry', icon: <FileText className="w-6 h-6 text-icon-gray" />, label: 'Registro de Examen', action: onExamRegistry },
-    { id: 'exit-exam', icon: <Unlock className="w-6 h-6 text-icon-gray" />, label: 'Abandonar modo Examen', action: onExitExam },
+    { id: 'exit-exam', icon: <Image src="/icons/examen.svg" alt="Abandonar modo Examen" width={24} height={24} className="w-6 h-6" />, label: 'Abandonar modo Examen', action: onExitExam },
   ]
 
   const menuItems = isExamMode ? examMenuItems : normalMenuItems

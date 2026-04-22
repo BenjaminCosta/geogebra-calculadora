@@ -1,18 +1,31 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useRef, useEffect } from 'react'
 import { MoreVertical } from 'lucide-react'
 
 const xValues = [-2, -1, 0, 1, 2]
 
 export function TableScreen() {
   const [notes, setNotes] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const tablaRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = tablaRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.intersectionRatio > 0.4) textareaRef.current?.blur() },
+      { threshold: 0.4 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-white">
 
       {/* PAGE 1: Tabla */}
-      <div className="min-h-full flex flex-col">
+      <div ref={tablaRef} className="min-h-full flex flex-col">
       <div className="border-b border-[#ECECF1] px-6 py-4">
         <h2 className="text-[14px] font-semibold text-primary-violet">
           Definir funciones
@@ -59,6 +72,7 @@ export function TableScreen() {
         </div>
 
         <textarea
+          ref={textareaRef}
           value={notes}
           onChange={e => setNotes(e.target.value)}
           placeholder="Escribe aquí tus procedimientos… Ej: sin(30) = 0.5"

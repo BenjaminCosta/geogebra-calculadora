@@ -116,7 +116,8 @@ function evalExpr(display: string, ans: number): string {
   const s = display
     .replace(/×/g, '*').replace(/÷/g, '/')
     .replace(/−/g, '-').replace(/π/g, 'pi')
-    .replace(/√\(/g, 'sqrt(').trim()
+    .replace(/√\(/g, 'sqrt(')
+    .replace(/%/g, '/100').trim()
   if (!s) return ''
   try {
     const v = new MathParser(s, { pi: Math.PI, e: Math.E, ans }, MATH_FNS).parse()
@@ -357,17 +358,17 @@ const ROWS: KeyDef[][] = [
   [
     { id: 'ln',    label: 'ln',                     action: { type: 'insert', text: 'ln(' } },
     { id: 'log',   label: <span className="text-[11px] leading-none">log<sub>10</sub></span>, action: { type: 'insert', text: 'log(' } },
-    { id: 'mat22', label: <IconFraction />,         action: { type: 'insert', text: '' } },
-    { id: 'mat23', label: <IconTable />,             action: { type: 'insert', text: '' } },
+    { id: 'ekey',  label: <span className="italic">e</span>, action: { type: 'insert', text: 'e' } },
+    { id: 'pct',   label: '%',                      action: { type: 'insert', text: '%' } },
     { id: '1',     label: '1',                      action: { type: 'insert', text: '1' } },
     { id: '2',     label: '2',                      action: { type: 'insert', text: '2' } },
     { id: '3',     label: '3',                      action: { type: 'insert', text: '3' } },
-    { id: 'csel',  label: <IconCellSel />,          action: { type: 'insert', text: '' } },
+    { id: 'comma', label: ',',                      action: { type: 'insert', text: ',' } },
     { id: 'back',  label: <IconBackspace />,        action: { type: 'backspace' },         variant: 'gray' },
   ],
   [
     { id: 'ans',   label: 'ans',                    action: { type: 'insert', text: 'ans' }, variant: 'gray' },
-    { id: 'comma', label: ',',                      action: { type: 'insert', text: ',' } },
+    { id: 'pow',   label: '^',                      action: { type: 'insert', text: '^' } },
     { id: 'lpar',  label: '(',                      action: { type: 'insert', text: '(' } },
     { id: 'rpar',  label: ')',                      action: { type: 'insert', text: ')' } },
     { id: '0',     label: '0',                      action: { type: 'insert', text: '0' } },
@@ -493,12 +494,12 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
   }, []) // safe — reads/writes stateRef only
 
   // ── Theming ──────────────────────────────────────────────────────────────
-  const kbBg      = isExamMode ? 'bg-[#138A7E]' : 'bg-[#f3f2f7]'
-  const pillOn    = isExamMode ? 'bg-white text-[#138A7E]' : 'bg-[#6C63FF] text-[#1C1C1E]'
-  const pillOff   = isExamMode ? 'text-white/80' : 'text-[#3C3C43]'
-  const closeCol  = isExamMode ? 'text-white/80' : 'text-[#3C3C43]'
-  const keyWhite  = isExamMode ? 'bg-[#1aA896] text-white' : 'bg-white text-[#1C1C1E]'
-  const keyGray   = isExamMode ? 'bg-[#0D7A6F] text-white' : 'bg-[#d1d0d6] text-[#1C1C1E]'
+  const kbBg      = 'bg-[#f3f2f7]'
+  const pillOn    = 'bg-[#6C63FF] text-[#1C1C1E]'
+  const pillOff   = 'text-[#3C3C43]'
+  const closeCol  = 'text-[#3C3C43]'
+  const keyWhite  = 'bg-white text-[#1C1C1E]'
+  const keyGray   = 'bg-[#d1d0d6] text-[#1C1C1E]'
 
   const currentId = nextId.current
 
