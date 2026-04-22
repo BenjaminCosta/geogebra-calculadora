@@ -19,8 +19,10 @@ export function BottomNavigation({
 }: BottomNavigationProps) {
   return (
     <nav
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      className={`flex items-center justify-around py-2 transition-colors duration-300 ${
+      style={{
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)',
+      }}
+      className={`relative z-30 shrink-0 flex min-h-16 items-center justify-around pt-2 transition-colors duration-300 ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'
       }`}
     >

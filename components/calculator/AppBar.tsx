@@ -35,9 +35,13 @@ export function AppBar({
       clearTimeout(longPressTimer.current)
       longPressTimer.current = null
     }
+  }
+
+  const handleMenuClick = () => {
     if (!didLongPress.current) {
       onMenuClick()
     }
+    didLongPress.current = false
   }
 
   const handleMenuPointerLeave = () => {
@@ -56,6 +60,7 @@ export function AppBar({
         onPointerDown={handleMenuPointerDown}
         onPointerUp={handleMenuPointerUp}
         onPointerLeave={handleMenuPointerLeave}
+        onClick={handleMenuClick}
         className="p-2 -ml-2 rounded-full transition-colors select-none hover:bg-gray-100 active:bg-gray-200"
         aria-label="Abrir menú"
       >

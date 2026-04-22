@@ -163,53 +163,6 @@ export function SecuritySetupModal({ isOpen, onConfirm, onSkip }: SecuritySetupM
   )
 }
 
-// ─── Return To Exam Modal ────────────────────────────────────────────────────
-
-interface ReturnToExamModalProps {
-  isOpen: boolean
-  onReturn: () => void
-}
-
-export function ReturnToExamModal({ isOpen, onReturn }: ReturnToExamModalProps) {
-  if (!isOpen) return null
-
-  return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="return-exam-title"
-      >
-        {/* Header */}
-        <div className="bg-orange-500 px-6 py-4">
-          <h2 id="return-exam-title" className="text-white text-lg font-medium">
-            ¡Saliste del examen!
-          </h2>
-        </div>
-
-        {/* Body */}
-        <div className="px-6 py-5">
-          <p className="text-text-primary leading-relaxed">
-            Se registró una salida de pantalla completa. Volvé al examen inmediatamente.
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 pb-5 flex justify-end">
-          <button
-            onClick={onReturn}
-            className="px-6 py-2.5 rounded-full bg-primary-violet text-white font-medium hover:bg-primary-violet-dark transition-colors"
-          >
-            Volver al examen
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ─── Exit Exam Modal ─────────────────────────────────────────────────────────
 
 interface ExitExamModalProps {
@@ -269,9 +222,6 @@ interface ExamDetailsModalProps {
   date: string
   startTime: string
   endTime: string
-  wasHacked?: boolean
-  fullscreenExits?: number
-  visibilityWarnings?: number
 }
 
 export function ExamDetailsModal({
@@ -281,13 +231,8 @@ export function ExamDetailsModal({
   date,
   startTime,
   endTime,
-  wasHacked = false,
-  fullscreenExits = 0,
-  visibilityWarnings = 0,
 }: ExamDetailsModalProps) {
   if (!isOpen) return null
-
-  const isCompromised = wasHacked || fullscreenExits > 0
 
   return (
     <div
@@ -302,10 +247,10 @@ export function ExamDetailsModal({
         aria-labelledby="exam-details-title"
       >
         {/* Header */}
-        <div className={`px-5 py-4 ${isCompromised ? 'bg-red-500' : 'bg-header-teal'}`}>
+        <div className="px-5 py-4 bg-header-teal">
           <p className="text-white/90 text-sm">GeoGebra Calc. Científica</p>
           <h2 id="exam-details-title" className="text-white text-xl font-bold">
-            Examen: {isCompromised ? 'COMPROMETIDO' : 'OK'}
+            Examen: OK
           </h2>
         </div>
 
@@ -334,27 +279,6 @@ export function ExamDetailsModal({
             <p className="text-text-secondary text-sm">Hora de finalización</p>
             <p className="text-text-primary text-lg font-medium">{endTime}</p>
           </div>
-
-          {/* Security events */}
-          {(fullscreenExits > 0 || visibilityWarnings > 0 || wasHacked) && (
-            <div className="mt-4 pt-3 border-t border-border space-y-1.5">
-              {wasHacked && (
-                <p className="text-red-500 text-sm font-medium">
-                  ⚠ Bypass detectado ({wasHacked ? 1 : 0} vez)
-                </p>
-              )}
-              {fullscreenExits > 0 && (
-                <p className="text-red-500 text-sm font-medium">
-                  ⚠ Salidas de pantalla completa: {fullscreenExits}
-                </p>
-              )}
-              {visibilityWarnings > 0 && (
-                <p className="text-orange-500 text-sm font-medium">
-                  ⚠ Cambios de app detectados: {visibilityWarnings}
-                </p>
-              )}
-            </div>
-          )}
         </div>
 
         {/* Footer */}

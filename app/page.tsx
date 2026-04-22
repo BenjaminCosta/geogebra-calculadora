@@ -7,7 +7,6 @@ import { GeoGebraFrame, GeoGebraFrameRef } from '@/components/calculator/GeoGebr
 import {
   StartExamModal,
   SecuritySetupModal,
-  ReturnToExamModal,
   ExitExamModal,
   ExamDetailsModal,
 } from '@/components/calculator/ExamModals'
@@ -17,6 +16,7 @@ import { SettingsScreen } from '@/components/calculator/SettingsScreen'
 
 type NavigationTab = 'algebra' | 'tabla'
 type Screen = 'calculator' | 'settings'
+const GEOGEBRA_HELP_URL = 'https://help.geogebra.org/hc/en-us'
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60)
@@ -53,11 +53,6 @@ export default function CalculatorPage() {
   const [isScreenLocked, setIsScreenLocked] = useState(false)
   const [examSeconds, setExamSeconds] = useState(0)
   const [examStartTime, setExamStartTime] = useState<Date | null>(null)
-  const [isHacked, setIsHacked] = useState(false)
-  const [hackTapCount, setHackTapCount] = useState(0)
-  const [visibilityWarnings, setVisibilityWarnings] = useState(0)
-  const [fullscreenExits, setFullscreenExits] = useState(0)
-  const hackTapTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Refs to avoid stale closures in event listeners
   const isExamModeRef = useRef(isExamMode)
@@ -68,7 +63,6 @@ export default function CalculatorPage() {
   // Modal states
   const [showStartExamModal, setShowStartExamModal] = useState(false)
   const [showSecuritySetupModal, setShowSecuritySetupModal] = useState(false)
-  const [showReturnToExamModal, setShowReturnToExamModal] = useState(false)
   const [showExitExamModal, setShowExitExamModal] = useState(false)
   const [showExamDetailsModal, setShowExamDetailsModal] = useState(false)
   const [examEndTime, setExamEndTime] = useState<Date | null>(null)
@@ -76,7 +70,7 @@ export default function CalculatorPage() {
   // GeoGebra ref
   const geogebraRef = useRef<GeoGebraFrameRef>(null)
 
-  // ── Dynamic theme-color (status bar nativo iOS/Android) ────────────────────
+  // ── Dynamic theme-color (status bar nativo Android) ────────────────────────
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]')
     if (meta) {
@@ -90,22 +84,6 @@ export default function CalculatorPage() {
     const interval = setInterval(() => setExamSeconds(prev => prev + 1), 1000)
     return () => clearInterval(interval)
   }, [isExamMode])
-
-  // ── Fullscreen change detection ─────────────────────────────────────────────
-  useEffect(() => {
-    const handler = () => {
-      if (
-        !document.fullscreenElement &&
-        isExamModeRef.current &&
-        isScreenLockedRef.current
-      ) {
-        setFullscreenExits(n => n + 1)
-        setShowReturnToExamModal(true)
-      }
-    }
-    document.addEventListener('fullscreenchange', handler)
-    return () => document.removeEventListener('fullscreenchange', handler)
-  }, [])
 
   // ── Back button trap ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -131,33 +109,6 @@ export default function CalculatorPage() {
       .catch(() => {})
     return () => { wakeLock?.release() }
   }, [isExamMode, isScreenLocked])
-
-  // ── Visibility change (app switch detection) ────────────────────────────────
-  useEffect(() => {
-    const handler = () => {
-      if (document.hidden && isExamModeRef.current) {
-        setVisibilityWarnings(n => n + 1)
-      }
-    }
-    document.addEventListener('visibilitychange', handler)
-    return () => document.removeEventListener('visibilitychange', handler)
-  }, [])
-
-  // ── Hack tap sequence ───────────────────────────────────────────────────────
-  const handleTimerClick = useCallback(() => {
-    if (!isExamMode) return
-    if (hackTapTimeoutRef.current) clearTimeout(hackTapTimeoutRef.current)
-    const newCount = hackTapCount + 1
-    setHackTapCount(newCount)
-    if (newCount >= 5) {
-      setIsHacked(true)
-      setHackTapCount(0)
-      console.warn('[EXAM HACK] Secuencia de bypass detectada - 5 toques consecutivos')
-      geogebraRef.current?.reload()
-    } else {
-      hackTapTimeoutRef.current = setTimeout(() => setHackTapCount(0), 2000)
-    }
-  }, [isExamMode, hackTapCount])
 
   // ── Lock toggle (hidden: long press on ☰) ──────────────────────────────────
   const handleLockToggle = useCallback(() => {
@@ -185,10 +136,6 @@ export default function CalculatorPage() {
     setIsScreenLocked(true)
     setExamSeconds(0)
     setExamStartTime(new Date())
-    setIsHacked(false)
-    setHackTapCount(0)
-    setVisibilityWarnings(0)
-    setFullscreenExits(0)
     document.documentElement.requestFullscreen().catch(() => {})
     geogebraRef.current?.reload()
   }
@@ -202,11 +149,6 @@ export default function CalculatorPage() {
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {})
     }
-  }
-
-  const handleReturnToExam = () => {
-    setShowReturnToExamModal(false)
-    document.documentElement.requestFullscreen().catch(() => {})
   }
 
   const handleClearAll = () => {
@@ -229,18 +171,17 @@ export default function CalculatorPage() {
   }
 
   const handleProperties = () => {
-    console.log('Propiedades clicked')
+    setIsDrawerOpen(false)
+    setActiveScreen('settings')
   }
 
   const handleHelp = () => {
-    console.log('Ayuda & Comentarios clicked')
+    window.open(GEOGEBRA_HELP_URL, '_blank', 'noopener,noreferrer')
   }
 
   const handleSettings = () => {
-    if (!isExamMode) {
-      setIsDrawerOpen(false)
-      setActiveScreen('settings')
-    }
+    setIsDrawerOpen(false)
+    setActiveScreen('settings')
   }
 
   const handleCloseSettings = () => {
@@ -248,13 +189,19 @@ export default function CalculatorPage() {
   }
 
   const handleTabChange = (tab: NavigationTab) => {
-    if (!isExamMode) {
-      setActiveNavTab(tab)
-    }
+    setActiveNavTab(tab)
   }
 
   return (
     <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
+      {/* iOS safe-area overlay — turns teal in exam mode */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+          isExamMode ? 'bg-header-teal' : 'bg-white'
+        }`}
+        style={{ height: 'env(safe-area-inset-top)' }}
+      />
+
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
       ) : (
@@ -267,9 +214,12 @@ export default function CalculatorPage() {
       />
 
       {activeNavTab === 'algebra' ? (
-        <main className="flex-1 min-h-0 bg-app-bg">
-          <div className="w-full h-full">
-            <GeoGebraFrame ref={geogebraRef} isHacked={isHacked} />
+        <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
+          <div
+            className="w-full h-full"
+            style={{ paddingBottom: '0.5rem' }}
+          >
+            <GeoGebraFrame ref={geogebraRef} />
           </div>
         </main>
       ) : (
@@ -279,7 +229,7 @@ export default function CalculatorPage() {
       <BottomNavigation
         activeTab={activeNavTab}
         onTabChange={handleTabChange}
-        disabled={isExamMode}
+        disabled={false}
         isExamMode={isExamMode}
       />
 
@@ -309,11 +259,6 @@ export default function CalculatorPage() {
         onSkip={handleConfirmSecuritySetup}
       />
 
-      <ReturnToExamModal
-        isOpen={showReturnToExamModal}
-        onReturn={handleReturnToExam}
-      />
-
       <ExitExamModal
         isOpen={showExitExamModal}
         onClose={() => setShowExitExamModal(false)}
@@ -322,17 +267,11 @@ export default function CalculatorPage() {
 
       <ExamDetailsModal
         isOpen={showExamDetailsModal}
-        onClose={() => {
-          setShowExamDetailsModal(false)
-          setIsHacked(false)
-        }}
+        onClose={() => setShowExamDetailsModal(false)}
         duration={formatTime(examSeconds)}
         date={examStartTime ? formatDate(examStartTime) : ''}
         startTime={examStartTime ? formatTimeOfDay(examStartTime) : ''}
         endTime={examEndTime ? formatTimeOfDay(examEndTime) : ''}
-        wasHacked={isHacked}
-        fullscreenExits={fullscreenExits}
-        visibilityWarnings={visibilityWarnings}
       />
     </div>
   )
