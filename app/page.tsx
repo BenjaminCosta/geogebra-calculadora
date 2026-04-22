@@ -207,14 +207,6 @@ export default function CalculatorPage() {
         }`}
         style={{ height: 'env(safe-area-inset-top)' }}
       />
-      {/* iOS bottom safe-area overlay */}
-      <div
-        className={`fixed bottom-0 left-0 right-0 z-50 transition-colors duration-300 ${
-          isExamMode ? 'bg-header-teal' : 'bg-white'
-        }`}
-        style={{ height: 'env(safe-area-inset-bottom)' }}
-      />
-
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
       ) : (
@@ -238,12 +230,18 @@ export default function CalculatorPage() {
         <TableScreen />
       )}
 
-      {/* Bottom nav: visible on Tabla, or on Álgebra when keyboard is closed */}
-      {(activeNavTab !== 'algebra' || !isKeyboardVisible) && (
+      {/* Bottom nav: visible on Tabla, or on Álgebra when keyboard is closed.
+           When hidden, a zero-height filler still pads the bottom safe area. */}
+      {(activeNavTab !== 'algebra' || !isKeyboardVisible) ? (
         <BottomNavigation
           activeTab={activeNavTab}
           onTabChange={handleTabChange}
           isExamMode={isExamMode}
+        />
+      ) : (
+        <div
+          className={`shrink-0 ${isExamMode ? 'bg-header-teal' : 'bg-white'}`}
+          style={{ height: 'env(safe-area-inset-bottom)' }}
         />
       )}
 
