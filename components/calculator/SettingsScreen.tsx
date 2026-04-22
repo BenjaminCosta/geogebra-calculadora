@@ -16,7 +16,13 @@ const settingsItems = [
 export function SettingsScreen({ onBack }: SettingsScreenProps) {
   return (
     <div className="flex flex-col h-dvh bg-[#F5F5F5]">
-      <header className="relative flex items-center justify-center px-6 py-4">
+      <header
+        style={{
+          paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)',
+          paddingBottom: '0.75rem',
+        }}
+        className="relative flex items-center justify-center px-6"
+      >
         <button
           onClick={onBack}
           className="absolute left-6 w-11 h-11 rounded-full bg-[#EDEDED] flex items-center justify-center"

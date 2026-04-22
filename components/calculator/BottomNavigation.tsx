@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Calculator, Table } from 'lucide-react'
 
 type Tab = 'algebra' | 'tabla'
@@ -17,10 +18,24 @@ export function BottomNavigation({
   disabled = false,
   isExamMode = false,
 }: BottomNavigationProps) {
+  const [isIosStandalone, setIsIosStandalone] = useState(false)
+
+  useEffect(() => {
+    const ua = navigator.userAgent
+    const isIos = /iPhone|iPad|iPod/i.test(ua)
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      // Safari iOS legacy flag
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Boolean((navigator as any).standalone)
+
+    setIsIosStandalone(isIos && isStandalone)
+  }, [])
+
   return (
     <nav
       style={{
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)',
+        paddingBottom: isIosStandalone ? '0.5rem' : 'calc(env(safe-area-inset-bottom) + 0.5rem)',
       }}
       className={`relative z-30 shrink-0 flex min-h-16 items-center justify-around pt-2 transition-colors duration-300 ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'

@@ -1,7 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import { useRef } from 'react'
-import { Menu, Settings } from 'lucide-react'
+import { Menu } from 'lucide-react'
 
 interface AppBarProps {
   onMenuClick: () => void
@@ -72,7 +73,13 @@ export function AppBar({
         className="p-2 -mr-2 rounded-full transition-colors hover:bg-gray-100 active:bg-gray-200"
         aria-label="Configuración"
       >
-        <Settings className="w-6 h-6 text-icon-gray" />
+        <Image
+          src="/icons/ajustes.svg"
+          alt="Configuración"
+          width={24}
+          height={24}
+          className="w-6 h-6"
+        />
       </button>
     </header>
   )

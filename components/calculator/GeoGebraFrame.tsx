@@ -10,7 +10,7 @@ interface GeoGebraFrameProps {
   isHacked?: boolean
 }
 
-const IFRAME_TOP_CROP = 122
+const IFRAME_TOP_CROP = 110
 const IFRAME_BOTTOM_CROP = 65
 const IFRAME_TRANSLATE_Y = 8
 const IFRAME_SCALE_Y = 1.02
@@ -39,21 +39,21 @@ export const GeoGebraFrame = forwardRef<GeoGebraFrameRef, GeoGebraFrameProps>(
 
     return (
       <div
-        className={`relative w-full h-full overflow-hidden transition-all duration-300 ${
+        className={`relative h-full w-full overflow-hidden transition-all duration-300 ${
           isHacked ? 'ring-4 ring-red-500 ring-inset' : ''
         }`}
       >
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-app-bg z-10">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-app-bg">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-4 border-primary-violet border-t-transparent rounded-full animate-spin" />
-              <span className="text-text-secondary text-sm">Cargando calculadora...</span>
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-violet border-t-transparent" />
+              <span className="text-sm text-text-secondary">Cargando calculadora...</span>
             </div>
           </div>
         )}
 
         {isHacked && (
-          <div className="absolute top-2 right-2 z-20 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium animate-pulse">
+          <div className="absolute right-2 top-2 z-20 rounded-full bg-red-500 px-2 py-1 text-xs font-medium text-white animate-pulse">
             BYPASS ACTIVO
           </div>
         )}

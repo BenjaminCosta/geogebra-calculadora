@@ -1,6 +1,8 @@
 'use client'
 
-import { X, Trash2, Clock, SlidersHorizontal, HelpCircle, FileText, Unlock } from 'lucide-react'
+import Image from 'next/image'
+import type { ReactNode } from 'react'
+import { X, FileText, Unlock } from 'lucide-react'
 
 interface DrawerProps {
   isOpen: boolean
@@ -25,19 +27,46 @@ export function Drawer({
   onHelp,
   isExamMode = false
 }: DrawerProps) {
+  type MenuItem = {
+    id: string
+    label: string
+    action: (() => void) | undefined
+    icon: ReactNode
+  }
+
   // Normal mode menu items
-  const normalMenuItems = [
-    { id: 'clear', icon: Trash2, label: 'Borrar todo', action: onClearAll },
-    { id: 'exam', icon: Clock, label: 'Examen', action: onExam },
-    { id: 'properties', icon: SlidersHorizontal, label: 'Propiedades', action: onProperties },
-    { id: 'help', icon: HelpCircle, label: 'Ayuda & Comentarios', action: onHelp },
+  const normalMenuItems: MenuItem[] = [
+    {
+      id: 'clear',
+      icon: <Image src="/icons/cross.svg" alt="Borrar todo" width={24} height={24} className="w-6 h-6" />,
+      label: 'Borrar todo',
+      action: onClearAll,
+    },
+    {
+      id: 'exam',
+      icon: <Image src="/icons/examen.svg" alt="Examen" width={24} height={24} className="w-6 h-6" />,
+      label: 'Examen',
+      action: onExam,
+    },
+    {
+      id: 'properties',
+      icon: <Image src="/icons/ajustes.svg" alt="Propiedades" width={24} height={24} className="w-6 h-6" />,
+      label: 'Propiedades',
+      action: onProperties,
+    },
+    {
+      id: 'help',
+      icon: <Image src="/icons/faq.svg" alt="Ayuda y comentarios" width={24} height={24} className="w-6 h-6" />,
+      label: 'Ayuda & Comentarios',
+      action: onHelp,
+    },
   ]
 
   // Exam mode menu items - matching the screenshot exactly
-  const examMenuItems = [
-    { id: 'clear', icon: X, label: 'Borrar todo', action: onClearAll },
-    { id: 'exam-registry', icon: FileText, label: 'Registro de Examen', action: onExamRegistry },
-    { id: 'exit-exam', icon: Unlock, label: 'Abandonar modo Examen', action: onExitExam },
+  const examMenuItems: MenuItem[] = [
+    { id: 'clear', icon: <X className="w-6 h-6 text-icon-gray" />, label: 'Borrar todo', action: onClearAll },
+    { id: 'exam-registry', icon: <FileText className="w-6 h-6 text-icon-gray" />, label: 'Registro de Examen', action: onExamRegistry },
+    { id: 'exit-exam', icon: <Unlock className="w-6 h-6 text-icon-gray" />, label: 'Abandonar modo Examen', action: onExitExam },
   ]
 
   const menuItems = isExamMode ? examMenuItems : normalMenuItems
@@ -69,7 +98,13 @@ export function Drawer({
         aria-label="Menú de navegación"
       >
         {/* Header - always white with title */}
-        <div className="flex items-center justify-between px-4 py-5 border-b border-border bg-white">
+        <div
+          style={{
+            paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)',
+            paddingBottom: '0.75rem',
+          }}
+          className="flex items-center justify-between px-4 border-b border-border bg-white"
+        >
           <h2 className="text-lg font-medium text-text-primary">
             GeoGebra Calc. Científica
           </h2>
@@ -90,7 +125,7 @@ export function Drawer({
               onClick={() => handleItemClick(item.action)}
               className="flex items-center gap-4 w-full px-4 py-3.5 transition-colors hover:bg-gray-100 active:bg-gray-200"
             >
-              <item.icon className="w-6 h-6 text-icon-gray" />
+              {item.icon}
               <span className="font-normal text-text-primary">
                 {item.label}
               </span>
