@@ -38,9 +38,9 @@ export function BottomNavigation({
     <nav
       aria-hidden={isHidden}
       style={{
-        paddingBottom: isIosStandalone ? '0.5rem' : 'calc(env(safe-area-inset-bottom) + 0.5rem)',
+        paddingBottom: isIosStandalone ? '0px' : 'env(safe-area-inset-bottom)',
       }}
-      className={`relative z-30 shrink-0 flex min-h-16 items-center justify-around pt-2 transition-colors duration-300 ${
+      className={`relative z-30 shrink-0 flex h-14 items-center justify-around transition-colors duration-300 ${
         isHidden ? 'hidden' : ''
       } ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'

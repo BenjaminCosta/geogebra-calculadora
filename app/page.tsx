@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AppBar } from '@/components/calculator/AppBar'
 import { Drawer } from '@/components/calculator/Drawer'
-import { GeoGebraFrame, GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
+import type { GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
+import { CustomCalculator } from '@/components/calculator/CustomCalculator'
 import {
   StartExamModal,
   SecuritySetupModal,
@@ -67,7 +68,10 @@ export default function CalculatorPage() {
   const [showExamDetailsModal, setShowExamDetailsModal] = useState(false)
   const [examEndTime, setExamEndTime] = useState<Date | null>(null)
 
-  // GeoGebra ref
+  // Keyboard visibility (hides JSX bottom nav while calc keyboard is open)
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(true)
+
+  // GeoGebra ref (kept null-safe for exam mode reload handlers)
   const geogebraRef = useRef<GeoGebraFrameRef>(null)
 
   // ── Dynamic theme-color (status bar nativo Android) ────────────────────────
@@ -190,6 +194,7 @@ export default function CalculatorPage() {
 
   const handleTabChange = (tab: NavigationTab) => {
     setActiveNavTab(tab)
+    if (tab === 'algebra') setIsKeyboardVisible(true)
   }
 
   return (
@@ -213,22 +218,26 @@ export default function CalculatorPage() {
         isExamMode={isExamMode}
       />
 
+      {/* Main content */}
       {activeNavTab === 'algebra' ? (
-        <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
-          <div className="w-full h-full">
-            {/* bottomCrop=56 pushes GeoGebra's native bottom nav below the overflow-hidden clip */}
-            <GeoGebraFrame ref={geogebraRef} bottomCrop={0} />
-          </div>
+        <main className="flex-1 min-h-0">
+          <CustomCalculator
+            isExamMode={isExamMode}
+            onKeyboardVisibilityChange={setIsKeyboardVisible}
+          />
         </main>
       ) : (
         <TableScreen />
       )}
 
-      <BottomNavigation
-        activeTab={activeNavTab}
-        onTabChange={handleTabChange}
-        isExamMode={isExamMode}
-      />
+      {/* Bottom nav: visible on Tabla, or on Álgebra when keyboard is closed */}
+      {(activeNavTab !== 'algebra' || !isKeyboardVisible) && (
+        <BottomNavigation
+          activeTab={activeNavTab}
+          onTabChange={handleTabChange}
+          isExamMode={isExamMode}
+        />
+      )}
 
       <Drawer
         isOpen={isDrawerOpen}

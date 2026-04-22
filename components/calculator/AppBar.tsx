@@ -55,7 +55,7 @@ export function AppBar({
   return (
     <header
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
-      className="flex items-center justify-between px-4 py-3 bg-white shadow-sm"
+      className="relative z-10 flex items-center justify-between px-4 py-3 bg-[#FFFFFF] shadow-[0_2px_6px_rgba(0,0,0,0.14)]"
     >
       <button
         onPointerDown={handleMenuPointerDown}
