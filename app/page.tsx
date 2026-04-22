@@ -59,8 +59,10 @@ export default function CalculatorPage() {
   // Refs to avoid stale closures in event listeners
   const isExamModeRef = useRef(isExamMode)
   const isScreenLockedRef = useRef(isScreenLocked)
-  useEffect(() => { isExamModeRef.current = isExamMode }, [isExamMode])
-  useEffect(() => { isScreenLockedRef.current = isScreenLocked }, [isScreenLocked])
+  useEffect(() => {
+    isExamModeRef.current = isExamMode
+    isScreenLockedRef.current = isScreenLocked
+  }, [isExamMode, isScreenLocked])
 
   // Modal states
   const [showStartExamModal, setShowStartExamModal] = useState(false)

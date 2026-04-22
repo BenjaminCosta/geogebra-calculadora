@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
-import { X, MoreVertical } from 'lucide-react'
+import { useState, useCallback, useRef, useMemo, memo } from 'react'
+import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 // ─── Safe recursive-descent math parser ───────────────────────────────────
@@ -503,12 +503,11 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
 
   const currentId = nextId.current
 
-  // Live result — recomputed on every expr change
-  const liveResult = (() => {
+  const liveResult = useMemo(() => {
     if (!expr.trim()) return ''
     const r = evalExpr(expr, stateRef.current.ans)
     return r === 'Error' ? '' : r
-  })()
+  }, [expr])
 
   return (
     <div className="flex flex-col flex-1 min-h-0 select-none">
@@ -712,7 +711,7 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
 }
 
 // ─── Key button ───────────────────────────────────────────────────────────
-function CalcKey({
+const CalcKey = memo(function CalcKey({
   def, onAction, white, gray,
 }: {
   def: KeyDef
@@ -734,4 +733,4 @@ function CalcKey({
       {def.label}
     </button>
   )
-}
+})

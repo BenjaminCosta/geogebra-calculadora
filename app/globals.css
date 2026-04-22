@@ -95,6 +95,13 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* iOS safe-area bottom padding for elements that must clear the home indicator */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
 /* Hide scrollbar but allow scrolling */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
