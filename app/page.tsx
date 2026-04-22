@@ -217,7 +217,7 @@ export default function CalculatorPage() {
         <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
           <div className="w-full h-full">
             {/* bottomCrop=56 pushes GeoGebra's native bottom nav below the overflow-hidden clip */}
-            <GeoGebraFrame ref={geogebraRef} bottomCrop={56} />
+            <GeoGebraFrame ref={geogebraRef} bottomCrop={0} />
           </div>
         </main>
       ) : (
