@@ -1,14 +1,29 @@
 'use client'
 
 import { Fragment, useState, useRef, useEffect } from 'react'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, Maximize2, Minimize2 } from 'lucide-react'
 
 const xValues = [-2, -1, 0, 1, 2]
 
 export function TableScreen() {
   const [notes, setNotes] = useState('')
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const tablaRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {})
+    } else {
+      document.exitFullscreen().catch(() => {})
+    }
+  }
 
   useEffect(() => {
     const el = tablaRef.current
@@ -65,10 +80,20 @@ export function TableScreen() {
 
       {/* PAGE 2: Procedimiento */}
       <div className="min-h-full flex flex-col border-t-[3px] border-[#ECECF1]">
-        <div className="border-b border-[#ECECF1] px-6 py-4">
+        <div className="border-b border-[#ECECF1] px-6 py-4 flex items-center justify-between">
           <h2 className="text-[14px] font-semibold text-primary-violet">
             Procedimiento
           </h2>
+          <button
+            onPointerDown={e => { e.preventDefault(); toggleFullscreen() }}
+            className="p-1 text-[#6A6A73] active:text-primary-violet"
+            aria-label={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
+          >
+            {isFullscreen
+              ? <Minimize2 className="w-4 h-4" strokeWidth={2} />
+              : <Maximize2 className="w-4 h-4" strokeWidth={2} />
+            }
+          </button>
         </div>
 
         <textarea

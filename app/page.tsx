@@ -14,6 +14,7 @@ import {
 import { BottomNavigation } from '@/components/calculator/BottomNavigation'
 import { TableScreen } from '@/components/calculator/TableScreen'
 import { SettingsScreen } from '@/components/calculator/SettingsScreen'
+import { SplashScreen } from '@/components/calculator/SplashScreen'
 
 type NavigationTab = 'algebra' | 'tabla'
 type Screen = 'calculator' | 'settings'
@@ -194,17 +195,24 @@ export default function CalculatorPage() {
 
   const handleTabChange = (tab: NavigationTab) => {
     setActiveNavTab(tab)
-    if (tab === 'algebra') setIsKeyboardVisible(true)
   }
 
   return (
     <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
+      <SplashScreen />
       {/* iOS safe-area overlay — turns teal in exam mode */}
       <div
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
           isExamMode ? 'bg-header-teal' : 'bg-white'
         }`}
         style={{ height: 'env(safe-area-inset-top)' }}
+      />
+      {/* iOS bottom safe-area overlay */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 transition-colors duration-300 ${
+          isExamMode ? 'bg-header-teal' : 'bg-white'
+        }`}
+        style={{ height: 'env(safe-area-inset-bottom)' }}
       />
 
       {activeScreen === 'settings' ? (
