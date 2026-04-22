@@ -11,8 +11,9 @@ interface GeoGebraFrameProps {
   bottomCrop?: number
 }
 
-const IFRAME_TOP_CROP = 100
-const IFRAME_TRANSLATE_Y = 0
+const IFRAME_TOP_CROP = 110
+const IFRAME_TRANSLATE_Y = 8
+const IFRAME_SCALE_Y = 1.02
 
 export const GeoGebraFrame = forwardRef<GeoGebraFrameRef, GeoGebraFrameProps>(
   function GeoGebraFrame({ isHacked = false, bottomCrop = 0 }, ref) {
@@ -65,6 +66,8 @@ export const GeoGebraFrame = forwardRef<GeoGebraFrameRef, GeoGebraFrameProps>(
           style={{
             top: `-${IFRAME_TOP_CROP - IFRAME_TRANSLATE_Y}px`,
             height: `calc(100% + ${IFRAME_TOP_CROP + bottomCrop}px)`,
+            transform: `scaleY(${IFRAME_SCALE_Y})`,
+            transformOrigin: 'top center'
           }}
           title="GeoGebra Calculadora Científica"
           allow="clipboard-write"
