@@ -57,6 +57,7 @@ export function AppBar({
 
   return (
     <header
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
       className={`flex items-center justify-between px-4 py-3 shadow-sm transition-colors duration-300 ${
         isHacked ? 'bg-red-600' : isExamMode ? 'bg-header-teal' : 'bg-white'
       }`}

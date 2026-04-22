@@ -19,6 +19,7 @@ export function BottomNavigation({
 }: BottomNavigationProps) {
   return (
     <nav
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       className={`flex items-center justify-around py-2 transition-colors duration-300 ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'
       } ${disabled ? 'opacity-50' : ''}`}
