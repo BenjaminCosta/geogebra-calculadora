@@ -25,7 +25,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
           <ArrowLeft className="w-5 h-5 text-black" />
         </button>
 
-        <h1 className="text-2xl leading-none font-medium text-text-primary">General</h1>
+        <h1 className="text-lg font-medium text-text-primary">General</h1>
       </header>
 
       <main className="px-8 pt-5">

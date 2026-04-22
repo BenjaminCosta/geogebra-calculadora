@@ -19,8 +19,9 @@ export const metadata: Metadata = {
     title: 'Calc Científica',
   },
   icons: {
-    icon: '/icons/icon-192x192.png',
-    apple: '/icons/icon-192x192.png',
+    icon: '/icons/original_icon.webp',
+    shortcut: '/icons/original_icon.webp',
+    apple: '/icons/original_icon.webp',
   },
 }
 
