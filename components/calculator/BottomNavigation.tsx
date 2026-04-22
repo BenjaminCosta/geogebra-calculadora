@@ -10,6 +10,7 @@ interface BottomNavigationProps {
   onTabChange: (tab: Tab) => void
   disabled?: boolean
   isExamMode?: boolean
+  isHidden?: boolean
 }
 
 export function BottomNavigation({
@@ -17,6 +18,7 @@ export function BottomNavigation({
   onTabChange,
   disabled = false,
   isExamMode = false,
+  isHidden = false,
 }: BottomNavigationProps) {
   const [isIosStandalone, setIsIosStandalone] = useState(false)
 
@@ -34,10 +36,13 @@ export function BottomNavigation({
 
   return (
     <nav
+      aria-hidden={isHidden}
       style={{
         paddingBottom: isIosStandalone ? '0.5rem' : 'calc(env(safe-area-inset-bottom) + 0.5rem)',
       }}
       className={`relative z-30 shrink-0 flex min-h-16 items-center justify-around pt-2 transition-colors duration-300 ${
+        isHidden ? 'hidden' : ''
+      } ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'
       }`}
     >

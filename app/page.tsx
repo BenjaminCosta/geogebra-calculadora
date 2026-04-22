@@ -215,11 +215,9 @@ export default function CalculatorPage() {
 
       {activeNavTab === 'algebra' ? (
         <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
-          <div
-            className="w-full h-full"
-            style={{ paddingBottom: '0.5rem' }}
-          >
-            <GeoGebraFrame ref={geogebraRef} />
+          <div className="w-full h-full">
+            {/* bottomCrop=56 pushes GeoGebra's native bottom nav below the overflow-hidden clip */}
+            <GeoGebraFrame ref={geogebraRef} bottomCrop={56} />
           </div>
         </main>
       ) : (
@@ -229,7 +227,6 @@ export default function CalculatorPage() {
       <BottomNavigation
         activeTab={activeNavTab}
         onTabChange={handleTabChange}
-        disabled={false}
         isExamMode={isExamMode}
       />
 
