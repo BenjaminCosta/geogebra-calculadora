@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AppBar } from '@/components/calculator/AppBar'
 import { Drawer } from '@/components/calculator/Drawer'
-import { GeoGebraFrame, GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
+import { CustomCalculator } from '@/components/calculator/CustomCalculator'
 import {
   StartExamModal,
   SecuritySetupModal,
@@ -67,8 +67,8 @@ export default function CalculatorPage() {
   const [showExamDetailsModal, setShowExamDetailsModal] = useState(false)
   const [examEndTime, setExamEndTime] = useState<Date | null>(null)
 
-  // GeoGebra ref
-  const geogebraRef = useRef<GeoGebraFrameRef>(null)
+  // Key para forzar reset del CustomCalculator (clear all / inicio examen)
+  const [calculatorKey, setCalculatorKey] = useState(0)
 
   // ── Dynamic theme-color (status bar nativo Android) ────────────────────────
   useEffect(() => {
@@ -137,7 +137,7 @@ export default function CalculatorPage() {
     setExamSeconds(0)
     setExamStartTime(new Date())
     document.documentElement.requestFullscreen().catch(() => {})
-    geogebraRef.current?.reload()
+    setCalculatorKey(k => k + 1)
   }
 
   const handleEndExam = () => {
@@ -152,7 +152,7 @@ export default function CalculatorPage() {
   }
 
   const handleClearAll = () => {
-    geogebraRef.current?.reload()
+    setCalculatorKey(k => k + 1)
   }
 
   const handleExam = () => {
@@ -192,10 +192,8 @@ export default function CalculatorPage() {
     setActiveNavTab(tab)
   }
 
-  const isCalculatorActive = activeScreen === 'calculator' && activeNavTab === 'algebra'
-
   return (
-    <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
+    <div className="fixed inset-0 flex flex-col bg-app-bg">
       {/* iOS safe-area overlay — turns teal in exam mode */}
       <div
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
@@ -216,10 +214,8 @@ export default function CalculatorPage() {
       />
 
       {activeNavTab === 'algebra' ? (
-        <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
-          <div className="w-full h-full">
-            <GeoGebraFrame ref={geogebraRef} bottomCrop={0} />
-          </div>
+        <main className="flex-1 min-h-0">
+          <CustomCalculator key={calculatorKey} isExamMode={isExamMode} />
         </main>
       ) : (
         <TableScreen />
@@ -228,9 +224,7 @@ export default function CalculatorPage() {
       <BottomNavigation
         activeTab={activeNavTab}
         onTabChange={handleTabChange}
-        disabled={false}
         isExamMode={isExamMode}
-        isHidden={isCalculatorActive}
       />
 
       <Drawer
