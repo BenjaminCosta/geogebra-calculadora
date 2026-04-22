@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* GeoGebra Color Palette */
+  --app-bg: #F5F5F5;
+  --header-teal: #138A7E;
+  --primary-violet: #6C63FF;
+  --primary-violet-light: #7B6CF6;
+  --primary-violet-dark: #5A4FCF;
+  --btn-gray: #EEEEEE;
+  --btn-gray-dark: #E0E0E0;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-muted: #9E9E9E;
+  --icon-gray: #424242;
+  
+  /* Design tokens */
+  --background: #FFFFFF;
+  --foreground: #212121;
+  --card: #FFFFFF;
+  --card-foreground: #212121;
+  --popover: #FFFFFF;
+  --popover-foreground: #212121;
+  --primary: #6C63FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EEEEEE;
+  --secondary-foreground: #212121;
+  --muted: #F5F5F5;
+  --muted-foreground: #757575;
+  --accent: #138A7E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E0E0E0;
+  --input: #E0E0E0;
+  --ring: #6C63FF;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-roboto), 'Roboto', system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Custom GeoGebra colors */
+  --color-app-bg: var(--app-bg);
+  --color-header-teal: var(--header-teal);
+  --color-primary-violet: var(--primary-violet);
+  --color-primary-violet-light: var(--primary-violet-light);
+  --color-primary-violet-dark: var(--primary-violet-dark);
+  --color-btn-gray: var(--btn-gray);
+  --color-btn-gray-dark: var(--btn-gray-dark);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-icon-gray: var(--icon-gray);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-app-bg text-text-primary;
+  }
+}
+
+/* PWA specific styles */
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

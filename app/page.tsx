@@ -1,0 +1,327 @@
+'use client'
+
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { AppBar } from '@/components/calculator/AppBar'
+import { Drawer } from '@/components/calculator/Drawer'
+import { GeoGebraFrame, GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
+import {
+  StartExamModal,
+  SecuritySetupModal,
+  ReturnToExamModal,
+  ExitExamModal,
+  ExamDetailsModal,
+} from '@/components/calculator/ExamModals'
+import { TableScreen } from '@/components/calculator/TableScreen'
+import { SettingsScreen } from '@/components/calculator/SettingsScreen'
+
+type NavigationTab = 'algebra' | 'tabla'
+type Screen = 'calculator' | 'settings'
+
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+function formatTimeOfDay(date: Date): string {
+  return date.toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+
+export default function CalculatorPage() {
+  // Navigation state
+  const [activeNavTab, setActiveNavTab] = useState<NavigationTab>('algebra')
+  const [activeScreen, setActiveScreen] = useState<Screen>('calculator')
+
+  // Modal/Drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  // Exam Mode state
+  const [isExamMode, setIsExamMode] = useState(false)
+  const [isScreenLocked, setIsScreenLocked] = useState(false)
+  const [examSeconds, setExamSeconds] = useState(0)
+  const [examStartTime, setExamStartTime] = useState<Date | null>(null)
+  const [isHacked, setIsHacked] = useState(false)
+  const [hackTapCount, setHackTapCount] = useState(0)
+  const [visibilityWarnings, setVisibilityWarnings] = useState(0)
+  const [fullscreenExits, setFullscreenExits] = useState(0)
+  const hackTapTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Refs to avoid stale closures in event listeners
+  const isExamModeRef = useRef(isExamMode)
+  const isScreenLockedRef = useRef(isScreenLocked)
+  useEffect(() => { isExamModeRef.current = isExamMode }, [isExamMode])
+  useEffect(() => { isScreenLockedRef.current = isScreenLocked }, [isScreenLocked])
+
+  // Modal states
+  const [showStartExamModal, setShowStartExamModal] = useState(false)
+  const [showSecuritySetupModal, setShowSecuritySetupModal] = useState(false)
+  const [showReturnToExamModal, setShowReturnToExamModal] = useState(false)
+  const [showExitExamModal, setShowExitExamModal] = useState(false)
+  const [showExamDetailsModal, setShowExamDetailsModal] = useState(false)
+  const [examEndTime, setExamEndTime] = useState<Date | null>(null)
+
+  // GeoGebra ref
+  const geogebraRef = useRef<GeoGebraFrameRef>(null)
+
+  // ── Exam timer ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isExamMode) return
+    const interval = setInterval(() => setExamSeconds(prev => prev + 1), 1000)
+    return () => clearInterval(interval)
+  }, [isExamMode])
+
+  // ── Fullscreen change detection ─────────────────────────────────────────────
+  useEffect(() => {
+    const handler = () => {
+      if (
+        !document.fullscreenElement &&
+        isExamModeRef.current &&
+        isScreenLockedRef.current
+      ) {
+        setFullscreenExits(n => n + 1)
+        setShowReturnToExamModal(true)
+      }
+    }
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
+
+  // ── Back button trap ────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isExamMode || !isScreenLocked) return
+    history.pushState(null, '', window.location.href)
+    const handler = () => {
+      if (isExamModeRef.current && isScreenLockedRef.current) {
+        history.pushState(null, '', window.location.href)
+      }
+    }
+    window.addEventListener('popstate', handler)
+    return () => window.removeEventListener('popstate', handler)
+  }, [isExamMode, isScreenLocked])
+
+  // ── Wake Lock ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isExamMode || !isScreenLocked) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let wakeLock: any = null
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(navigator as any).wakeLock?.request('screen')
+      .then((wl: unknown) => { wakeLock = wl })
+      .catch(() => {})
+    return () => { wakeLock?.release() }
+  }, [isExamMode, isScreenLocked])
+
+  // ── Visibility change (app switch detection) ────────────────────────────────
+  useEffect(() => {
+    const handler = () => {
+      if (document.hidden && isExamModeRef.current) {
+        setVisibilityWarnings(n => n + 1)
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    return () => document.removeEventListener('visibilitychange', handler)
+  }, [])
+
+  // ── Hack tap sequence ───────────────────────────────────────────────────────
+  const handleTimerClick = useCallback(() => {
+    if (!isExamMode) return
+    if (hackTapTimeoutRef.current) clearTimeout(hackTapTimeoutRef.current)
+    const newCount = hackTapCount + 1
+    setHackTapCount(newCount)
+    if (newCount >= 5) {
+      setIsHacked(true)
+      setHackTapCount(0)
+      console.warn('[EXAM HACK] Secuencia de bypass detectada - 5 toques consecutivos')
+      geogebraRef.current?.reload()
+    } else {
+      hackTapTimeoutRef.current = setTimeout(() => setHackTapCount(0), 2000)
+    }
+  }, [isExamMode, hackTapCount])
+
+  // ── Lock toggle (hidden: long press on ☰) ──────────────────────────────────
+  const handleLockToggle = useCallback(() => {
+    if (!isExamMode) return
+    const newLocked = !isScreenLocked
+    setIsScreenLocked(newLocked)
+    if (newLocked) {
+      document.documentElement.requestFullscreen().catch(() => {})
+    } else {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {})
+      }
+    }
+  }, [isExamMode, isScreenLocked])
+
+  // ── Exam flow ───────────────────────────────────────────────────────────────
+  const handleStartExam = () => {
+    setShowStartExamModal(false)
+    setShowSecuritySetupModal(true)
+  }
+
+  const handleConfirmSecuritySetup = () => {
+    setShowSecuritySetupModal(false)
+    setIsExamMode(true)
+    setIsScreenLocked(true)
+    setExamSeconds(0)
+    setExamStartTime(new Date())
+    setIsHacked(false)
+    setHackTapCount(0)
+    setVisibilityWarnings(0)
+    setFullscreenExits(0)
+    document.documentElement.requestFullscreen().catch(() => {})
+    geogebraRef.current?.reload()
+  }
+
+  const handleEndExam = () => {
+    setShowExitExamModal(false)
+    setIsExamMode(false)
+    setIsScreenLocked(false)
+    setExamEndTime(new Date())
+    setShowExamDetailsModal(true)
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {})
+    }
+  }
+
+  const handleReturnToExam = () => {
+    setShowReturnToExamModal(false)
+    document.documentElement.requestFullscreen().catch(() => {})
+  }
+
+  const handleClearAll = () => {
+    geogebraRef.current?.reload()
+  }
+
+  const handleExam = () => {
+    setShowStartExamModal(true)
+  }
+
+  const handleExitExam = () => {
+    setShowExitExamModal(true)
+  }
+
+  const handleExamRegistry = () => {
+    if (isExamMode) {
+      setExamEndTime(new Date())
+      setShowExamDetailsModal(true)
+    }
+  }
+
+  const handleProperties = () => {
+    console.log('Propiedades clicked')
+  }
+
+  const handleHelp = () => {
+    console.log('Ayuda & Comentarios clicked')
+  }
+
+  const handleSettings = () => {
+    if (!isExamMode) {
+      setIsDrawerOpen(false)
+      setActiveScreen('settings')
+    }
+  }
+
+  const handleCloseSettings = () => {
+    setActiveScreen('calculator')
+  }
+
+  const handleTabChange = (tab: NavigationTab) => {
+    if (!isExamMode) {
+      setActiveNavTab(tab)
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
+      {activeScreen === 'settings' ? (
+        <SettingsScreen onBack={handleCloseSettings} />
+      ) : (
+        <>
+      <AppBar
+        onMenuClick={() => setIsDrawerOpen(true)}
+        onSettingsClick={handleSettings}
+        onLockToggle={handleLockToggle}
+        isExamMode={isExamMode}
+        examTime={formatTime(examSeconds)}
+        onTimerClick={handleTimerClick}
+        isHacked={isHacked}
+        isScreenLocked={isScreenLocked}
+      />
+
+      {activeNavTab === 'algebra' ? (
+        <main className="flex-1 min-h-0 bg-app-bg">
+          <div className="w-full h-full">
+            <GeoGebraFrame ref={geogebraRef} isHacked={isHacked} />
+          </div>
+        </main>
+      ) : (
+        <TableScreen />
+      )}
+
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onClearAll={handleClearAll}
+        onExam={handleExam}
+        onExitExam={handleExitExam}
+        onExamRegistry={handleExamRegistry}
+        onProperties={handleProperties}
+        onHelp={handleHelp}
+        isExamMode={isExamMode}
+      />
+        </>
+      )}
+
+      <StartExamModal
+        isOpen={showStartExamModal}
+        onClose={() => setShowStartExamModal(false)}
+        onConfirm={handleStartExam}
+      />
+
+      <SecuritySetupModal
+        isOpen={showSecuritySetupModal}
+        onConfirm={handleConfirmSecuritySetup}
+        onSkip={handleConfirmSecuritySetup}
+      />
+
+      <ReturnToExamModal
+        isOpen={showReturnToExamModal}
+        onReturn={handleReturnToExam}
+      />
+
+      <ExitExamModal
+        isOpen={showExitExamModal}
+        onClose={() => setShowExitExamModal(false)}
+        onConfirm={handleEndExam}
+      />
+
+      <ExamDetailsModal
+        isOpen={showExamDetailsModal}
+        onClose={() => {
+          setShowExamDetailsModal(false)
+          setIsHacked(false)
+        }}
+        duration={formatTime(examSeconds)}
+        date={examStartTime ? formatDate(examStartTime) : ''}
+        startTime={examStartTime ? formatTimeOfDay(examStartTime) : ''}
+        endTime={examEndTime ? formatTimeOfDay(examEndTime) : ''}
+        wasHacked={isHacked}
+        fullscreenExits={fullscreenExits}
+        visibilityWarnings={visibilityWarnings}
+      />
+    </div>
+  )
+}
