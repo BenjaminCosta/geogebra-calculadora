@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { AppBar } from '@/components/calculator/AppBar'
 import { Drawer } from '@/components/calculator/Drawer'
-import type { GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
-import { CustomCalculator } from '@/components/calculator/CustomCalculator'
+import { GeoGebraFrame, GeoGebraFrameRef } from '@/components/calculator/GeoGebraFrame'
 import {
   StartExamModal,
   SecuritySetupModal,
@@ -14,7 +13,6 @@ import {
 import { BottomNavigation } from '@/components/calculator/BottomNavigation'
 import { TableScreen } from '@/components/calculator/TableScreen'
 import { SettingsScreen } from '@/components/calculator/SettingsScreen'
-import { SplashScreen } from '@/components/calculator/SplashScreen'
 
 type NavigationTab = 'algebra' | 'tabla'
 type Screen = 'calculator' | 'settings'
@@ -69,10 +67,7 @@ export default function CalculatorPage() {
   const [showExamDetailsModal, setShowExamDetailsModal] = useState(false)
   const [examEndTime, setExamEndTime] = useState<Date | null>(null)
 
-  // Keyboard visibility (hides JSX bottom nav while calc keyboard is open)
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(true)
-
-  // GeoGebra ref (kept null-safe for exam mode reload handlers)
+  // GeoGebra ref
   const geogebraRef = useRef<GeoGebraFrameRef>(null)
 
   // ── Dynamic theme-color (status bar nativo Android) ────────────────────────
@@ -197,16 +192,18 @@ export default function CalculatorPage() {
     setActiveNavTab(tab)
   }
 
+  const isCalculatorActive = activeScreen === 'calculator' && activeNavTab === 'algebra'
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-app-bg">
-      <SplashScreen />
+    <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
       {/* iOS safe-area overlay — turns teal in exam mode */}
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed inset-0 flex flex-col bg-app-bglors duration-300 ${
           isExamMode ? 'bg-header-teal' : 'bg-white'
         }`}
         style={{ height: 'env(safe-area-inset-top)' }}
       />
+
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
       ) : (
@@ -218,34 +215,22 @@ export default function CalculatorPage() {
         isExamMode={isExamMode}
       />
 
-      {/* Main content */}
       {activeNavTab === 'algebra' ? (
-        <main className="flex-1 min-h-0">
-          <CustomCalculator
-            isExamMode={isExamMode}
-            onKeyboardVisibilityChange={setIsKeyboardVisible}
-          />
+        <main className="relative z-0 flex-1 min-h-0 bg-app-bg">
+          <div className="w-full h-full">
+            <GeoGebraFrame ref={geogebraRef} bottomCrop={0} />
+          </div>
         </main>
       ) : (
         <TableScreen />
       )}
 
-      {/* Bottom nav: fixed to viewport bottom — immune to overflow clipping.
-           Spacer reserves the same height in the flex column so content isn't hidden behind it. */}
       <BottomNavigation
         activeTab={activeNavTab}
         onTabChange={handleTabChange}
+        disabled={false}
         isExamMode={isExamMode}
-        isHidden={activeNavTab === 'algebra' && isKeyboardVisible}
-      />
-      {/* Spacer that matches the fixed nav height so content isn't occluded */}
-      <div
-        className="shrink-0"
-        style={{
-          height: (activeNavTab !== 'algebra' || !isKeyboardVisible)
-            ? 'calc(3.5rem + env(safe-area-inset-bottom))'
-            : 'env(safe-area-inset-bottom)',
-        }}
+        isHidden={isCalculatorActive}
       />
 
       <Drawer
