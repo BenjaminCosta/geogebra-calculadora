@@ -83,6 +83,19 @@ export default function CalculatorPage() {
     }
   }, [isExamMode])
 
+  // ── Dynamic body bg — covers iOS safe-area gap at bottom ──────────────────
+  // html/body always extend to physical screen edges on iOS.
+  // By matching their bg to whatever element sits at the bottom,
+  // any safe-area gap becomes invisible — no env() needed.
+  useEffect(() => {
+    const isKbShowing = activeScreen === 'calculator' && activeNavTab === 'algebra' && isKeyboardVisible
+    const color = isKbShowing
+      ? '#f3f2f7'
+      : isExamMode ? '#138A7E' : '#ffffff'
+    document.documentElement.style.backgroundColor = color
+    document.body.style.backgroundColor = color
+  }, [activeScreen, activeNavTab, isKeyboardVisible, isExamMode])
+
   // ── Exam timer ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isExamMode) return
@@ -202,10 +215,9 @@ export default function CalculatorPage() {
       <SplashScreen />
       {/* iOS safe-area overlay — turns teal in exam mode */}
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 safe-top-height transition-colors duration-300 ${
           isExamMode ? 'bg-header-teal' : 'bg-white'
         }`}
-        style={{ height: 'env(safe-area-inset-top)' }}
       />
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
@@ -220,7 +232,7 @@ export default function CalculatorPage() {
 
       {/* Main content */}
       {activeNavTab === 'algebra' ? (
-        <main className="flex-1 min-h-0">
+        <main className="flex-1 min-h-0 flex flex-col">
           <CustomCalculator
             isExamMode={isExamMode}
             onKeyboardVisibilityChange={setIsKeyboardVisible}

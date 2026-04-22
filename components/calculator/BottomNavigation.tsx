@@ -22,8 +22,7 @@ export function BottomNavigation({
   return (
     <nav
       aria-hidden={isHidden}
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      className={`shrink-0 transition-colors duration-300 ${
+      className={`shrink-0 safe-bottom transition-colors duration-300 ${
         isHidden ? 'hidden' : ''
       } ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'

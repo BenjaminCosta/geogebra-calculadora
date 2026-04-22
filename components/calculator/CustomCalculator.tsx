@@ -511,7 +511,7 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
   })()
 
   return (
-    <div className="flex flex-col h-full select-none">
+    <div className="flex flex-col flex-1 min-h-0 select-none">
 
       {/* ── Input / History area ──────────────────────────────────────── */}
       <div
@@ -572,8 +572,7 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
       {/* ── Keyboard ─────────────────────────────────────────────────── */}
       {kbOpen && (
         <div
-          className={`shrink-0 ${kbBg} transition-colors duration-300`}
-          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+          className={`shrink-0 safe-bottom ${kbBg} transition-colors duration-300`}
         >
           {/* Tab bar */}
           <div className="flex items-center px-3 pt-2 pb-1.5">
