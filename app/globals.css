@@ -95,19 +95,6 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* iOS safe-area insets — using @supports + max() like proven PWA pattern */
-@supports (padding: max(0px)) {
-  .safe-top {
-    padding-top: max(0px, env(safe-area-inset-top));
-  }
-  .safe-bottom {
-    padding-bottom: max(0px, env(safe-area-inset-bottom));
-  }
-  .safe-top-height {
-    height: max(0px, env(safe-area-inset-top));
-  }
-}
-
 /* Hide scrollbar but allow scrolling */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

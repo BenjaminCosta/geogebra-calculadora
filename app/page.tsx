@@ -213,6 +213,13 @@ export default function CalculatorPage() {
   return (
     <div className="fixed inset-0 flex flex-col bg-app-bg">
       <SplashScreen />
+      {/* Status bar color overlay — shows through the translucent black status bar */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 pointer-events-none transition-colors duration-300 ${
+          isExamMode ? 'bg-header-teal' : 'bg-white'
+        }`}
+        style={{ height: 'env(safe-area-inset-top)' }}
+      />
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
       ) : (

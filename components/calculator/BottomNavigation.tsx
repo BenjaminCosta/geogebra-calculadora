@@ -22,7 +22,7 @@ export function BottomNavigation({
   return (
     <nav
       aria-hidden={isHidden}
-      className={`fixed bottom-0 left-0 right-0 z-50 safe-bottom transition-colors duration-300 ${
+      className={`fixed bottom-0 left-0 right-0 z-50 pb-2 transition-colors duration-300 ${
         isHidden ? 'hidden' : ''
       } ${
         isExamMode ? 'bg-header-teal' : 'bg-white border-t border-border'
