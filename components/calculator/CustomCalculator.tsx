@@ -573,6 +573,7 @@ export function CustomCalculator({ isExamMode = false, onKeyboardVisibilityChang
       {kbOpen && (
         <div
           className={`shrink-0 ${kbBg} transition-colors duration-300`}
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           {/* Tab bar */}
           <div className="flex items-center px-3 pt-2 pb-1.5">
