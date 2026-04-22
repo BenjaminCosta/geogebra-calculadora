@@ -12,8 +12,8 @@ interface GeoGebraFrameProps {
 
 const IFRAME_TOP_CROP = 110
 const IFRAME_BOTTOM_CROP = 0
-const IFRAME_TRANSLATE_Y = 14
-const IFRAME_SCALE_Y = 0.985
+const IFRAME_TRANSLATE_Y = 8
+const IFRAME_SCALE_Y = 1.02
 
 export const GeoGebraFrame = forwardRef<GeoGebraFrameRef, GeoGebraFrameProps>(
   function GeoGebraFrame({ isHacked = false }, ref) {

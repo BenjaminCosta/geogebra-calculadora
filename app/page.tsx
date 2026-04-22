@@ -11,6 +11,7 @@ import {
   ExitExamModal,
   ExamDetailsModal,
 } from '@/components/calculator/ExamModals'
+import { BottomNavigation } from '@/components/calculator/BottomNavigation'
 import { TableScreen } from '@/components/calculator/TableScreen'
 import { SettingsScreen } from '@/components/calculator/SettingsScreen'
 
@@ -74,6 +75,14 @@ export default function CalculatorPage() {
 
   // GeoGebra ref
   const geogebraRef = useRef<GeoGebraFrameRef>(null)
+
+  // ── Dynamic theme-color (status bar nativo iOS/Android) ────────────────────
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) {
+      meta.setAttribute('content', isExamMode ? '#138A7E' : '#6C63FF')
+    }
+  }, [isExamMode])
 
   // ── Exam timer ──────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -270,6 +279,13 @@ export default function CalculatorPage() {
       ) : (
         <TableScreen />
       )}
+
+      <BottomNavigation
+        activeTab={activeNavTab}
+        onTabChange={handleTabChange}
+        disabled={isExamMode}
+        isExamMode={isExamMode}
+      />
 
       <Drawer
         isOpen={isDrawerOpen}
