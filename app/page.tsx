@@ -213,12 +213,6 @@ export default function CalculatorPage() {
   return (
     <div className="fixed inset-0 flex flex-col bg-app-bg">
       <SplashScreen />
-      {/* iOS safe-area overlay — turns teal in exam mode */}
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 safe-top-height transition-colors duration-300 ${
-          isExamMode ? 'bg-header-teal' : 'bg-white'
-        }`}
-      />
       {activeScreen === 'settings' ? (
         <SettingsScreen onBack={handleCloseSettings} />
       ) : (
@@ -230,16 +224,18 @@ export default function CalculatorPage() {
         isExamMode={isExamMode}
       />
 
-      {/* Main content */}
+      {/* Main content — pb-14 reserves space for the fixed BottomNavigation */}
       {activeNavTab === 'algebra' ? (
-        <main className="flex-1 min-h-0 flex flex-col">
+        <main className={`flex-1 min-h-0 flex flex-col ${!isKeyboardVisible ? 'pb-14' : ''}`}>
           <CustomCalculator
             isExamMode={isExamMode}
             onKeyboardVisibilityChange={setIsKeyboardVisible}
           />
         </main>
       ) : (
-        <TableScreen />
+        <div className="flex-1 pb-14">
+          <TableScreen />
+        </div>
       )}
 
       <BottomNavigation

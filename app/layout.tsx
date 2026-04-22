@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
+    statusBarStyle: 'default',
     title: 'Calc Científica',
   },
   icons: {
@@ -31,7 +31,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: '#6C63FF',
-  viewportFit: 'cover',
 }
 
 export default function RootLayout({
