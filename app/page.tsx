@@ -242,7 +242,7 @@ export default function CalculatorPage() {
           />
         </main>
       ) : (
-        <div className="flex-1 pb-14">
+        <div className="flex-1 min-h-0 flex flex-col pb-14">
           <TableScreen />
         </div>
       )}
