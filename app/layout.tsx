@@ -40,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className="bg-app-bg" suppressHydrationWarning>
+    <html lang="es" className="bg-white" suppressHydrationWarning>
       <body className={`${roboto.variable} font-sans antialiased`} suppressHydrationWarning>
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

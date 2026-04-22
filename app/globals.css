@@ -85,7 +85,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-app-bg text-text-primary;
+    @apply bg-white text-text-primary;
   }
 }
 
