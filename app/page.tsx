@@ -198,7 +198,7 @@ export default function CalculatorPage() {
   }
 
   return (
-    <div className="flex flex-col h-dvh bg-app-bg overflow-hidden">
+    <div className="fixed inset-0 flex flex-col bg-app-bg">
       <SplashScreen />
       {/* iOS safe-area overlay — turns teal in exam mode */}
       <div
