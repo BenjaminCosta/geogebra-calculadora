@@ -1,58 +1,74 @@
 'use client'
 
+import { Fragment, useState } from 'react'
 import { MoreVertical } from 'lucide-react'
 
 const xValues = [-2, -1, 0, 1, 2]
 
 export function TableScreen() {
+  const [notes, setNotes] = useState('')
+
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-[#F5F5F5]">
-      {/* Section Title */}
-      <div className="px-4 pt-4 pb-3">
-        <h2 className="text-lg font-medium text-primary-violet">
+    <div className="flex-1 min-h-0 overflow-y-auto bg-white">
+
+      {/* PAGE 1: Tabla */}
+      <div className="min-h-full flex flex-col">
+      <div className="border-b border-[#ECECF1] px-6 py-4">
+        <h2 className="text-[14px] font-semibold text-primary-violet">
           Definir funciones
         </h2>
       </div>
 
-      {/* Table Container */}
-      <div className="flex-1 overflow-auto mx-1">
-        <div className="bg-white">
-          {/* Table Header */}
-          <div className="grid grid-cols-3 bg-[#E8E6F0] border-b border-[#E0E0E0] sticky top-0">
-            <div className="flex items-center justify-center gap-1 py-3 px-2 border-r border-[#E0E0E0]">
-              <span className="text-sm font-medium text-[#212121]">x</span>
-              <MoreVertical className="w-4 h-4 text-[#757575]" />
+        <div className="flex-1 bg-white">
+          <div className="grid grid-cols-3 border-l border-r border-[#E4E4EA]">
+            <div className="flex items-center justify-center gap-1 border-b border-r border-[#DCDCE3] bg-[#EFEEF8] px-2 py-4">
+              <span className="text-[16px] font-medium text-[#212121]">x</span>
+              <MoreVertical className="h-4 w-4 text-[#6A6A73]" strokeWidth={2.2} />
             </div>
-            <div className="flex items-center justify-center py-3 px-2 border-r border-[#E0E0E0]">
-              <span className="text-sm font-medium text-[#212121]">f(x)</span>
+            <div className="flex items-center justify-center border-b border-r border-[#DCDCE3] bg-[#EFEEF8] px-2 py-4">
+              <span className="text-[16px] font-medium text-[#212121]">f(x)</span>
             </div>
-            <div className="flex items-center justify-center py-3 px-2">
-              <span className="text-sm font-medium text-[#212121]">g(x)</span>
+            <div className="flex items-center justify-center border-b border-[#DCDCE3] bg-[#EFEEF8] px-2 py-4">
+              <span className="text-[16px] font-medium text-[#212121]">g(x)</span>
             </div>
-          </div>
 
-          {/* Table Body */}
-          {xValues.map((value, index) => (
-            <div 
-              key={index} 
-              className="grid grid-cols-3 border-b border-[#E0E0E0]"
-            >
-              <div className="flex items-center justify-center py-4 px-2 border-r border-[#E0E0E0] bg-white">
-                <span className="text-base text-[#212121]">{value}</span>
-              </div>
-              <div className="flex items-center justify-center py-4 px-2 border-r border-[#E0E0E0] bg-white">
-                {/* Empty f(x) cell */}
-              </div>
-              <div className="flex items-center justify-center py-4 px-2 bg-white">
-                {/* Empty g(x) cell */}
-              </div>
-            </div>
-          ))}
+            {xValues.map((value) => (
+              <Fragment key={value}>
+                <div className="flex items-center justify-center border-b border-r border-[#E4E4EA] bg-white px-2 py-3.5">
+                  <span className="text-[15px] font-normal text-[#212121]">{value}</span>
+                </div>
+                <div className="border-b border-r border-[#E4E4EA] bg-white" />
+                <div className="border-b border-[#E4E4EA] bg-white" />
+              </Fragment>
+            ))}
+
+            <div className="h-12 border-r border-[#E4E4EA] bg-white" />
+            <div className="h-12 border-r border-[#E4E4EA] bg-white" />
+            <div className="h-12 bg-white" />
+          </div>
         </div>
+
       </div>
 
-      {/* Empty space below table */}
-      <div className="flex-1 min-h-[100px] bg-[#F5F5F5]" />
+      {/* PAGE 2: Procedimiento */}
+      <div className="min-h-full flex flex-col border-t-[3px] border-[#ECECF1]">
+        <div className="border-b border-[#ECECF1] px-6 py-4">
+          <h2 className="text-[14px] font-semibold text-primary-violet">
+            Procedimiento
+          </h2>
+        </div>
+
+        <textarea
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+          placeholder="Escribe aquí tus procedimientos… Ej: sin(30) = 0.5"
+          className="flex-1 w-full min-h-[60dvh] px-6 py-4 text-[15px] text-[#212121] placeholder:text-[#C7C7CC] bg-white resize-none outline-none font-sans leading-[1.75]"
+          spellCheck={false}
+          autoCapitalize="off"
+          autoCorrect="off"
+        />
+      </div>
+
     </div>
   )
 }
