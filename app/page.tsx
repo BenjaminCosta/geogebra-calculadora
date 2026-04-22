@@ -264,10 +264,6 @@ export default function CalculatorPage() {
         onSettingsClick={handleSettings}
         onLockToggle={handleLockToggle}
         isExamMode={isExamMode}
-        examTime={formatTime(examSeconds)}
-        onTimerClick={handleTimerClick}
-        isHacked={isHacked}
-        isScreenLocked={isScreenLocked}
       />
 
       {activeNavTab === 'algebra' ? (
